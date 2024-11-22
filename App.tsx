@@ -3,18 +3,15 @@ import React from 'react';
 import {
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   useColorScheme,
-  View,
 } from 'react-native';
-
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 import Attendance from './src/Components/attendence/Attendence';
+import MyCamera from './src/Components/attendence/Camera';
+import Toast from 'react-native-toast-message';
 
 
 function App() {
@@ -25,33 +22,20 @@ function App() {
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-           <Attendance />
-      </ScrollView>
-    </SafeAreaView>
+    <>
+      <SafeAreaView style={backgroundStyle}>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={backgroundStyle}>
+          <Attendance />
+          {/* <MyCamera /> */}
+        </ScrollView>
+      </SafeAreaView>
+      <Toast />
+    </>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+const styles = StyleSheet.create({});
 
 export default App;
