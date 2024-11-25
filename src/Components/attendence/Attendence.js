@@ -17,7 +17,6 @@ import {
   markAttendanceApi,
 } from '../../api/students/studentsApi';
 import RNFS from 'react-native-fs';
-
 import MyCamera from './Camera';
 import Toast from 'react-native-toast-message';
 const defaultImage = require('../../assets/default.jpeg');
@@ -65,13 +64,19 @@ const Attendance = () => {
       setWarning(false);
       setMessage('No active session');
       setStudents([]);
+
+      if (warningAnimation) {
+        warningAnimation.stop();
+        warningAnimation = null;
+      }
     });
 
     socket.on('disconnect', () => {
       console.log('Socket disconnected');
+      setWarning(true);
     });
 
-    // Cleanup socket on component unmount
+    // Cleanup socket
     return () => {
       socket.off('connect');
       socket.off('connected');
@@ -79,6 +84,9 @@ const Attendance = () => {
       socket.off('warn');
       socket.off('stop');
       socket.off('disconnect');
+      if (warningAnimation) {
+        warningAnimation.stop();
+      }
     };
   }, [students]);
 
@@ -91,8 +99,10 @@ const Attendance = () => {
     }
   };
 
+  let warningAnimation = null;
+
   const triggerWarning = () => {
-    Animated.loop(
+    warningAnimation = Animated.loop(
       Animated.sequence([
         Animated.timing(backgroundColor, {
           toValue: 1,
@@ -105,7 +115,8 @@ const Attendance = () => {
           useNativeDriver: false,
         }),
       ]),
-    ).start();
+    );
+    warningAnimation.start();
     setWarning(true);
   };
 
@@ -130,9 +141,9 @@ const Attendance = () => {
       const photo = await camera.current.takePhoto();
 
       if (photo) {
-        const base64Image = await convertFileToBase64(photo.path); 
+        const base64Image = await convertFileToBase64(photo.path);
         setCapturedPhoto(`file://${photo.path}`);
-        await markAttendanceApi(item._id, base64Image); 
+        await markAttendanceApi(item._id, base64Image);
         showToast(`Attendance marked successfully for student: ${item.name}`);
         console.log('Attendance marked successfully for student:', item.name);
       } else {
@@ -154,54 +165,7 @@ const Attendance = () => {
       throw error;
     }
   };
-  // const handlePress = async item => {
-  //   try {
-  //     // Launch camera
-  //     const result = await launchCamera({
-  //       mediaType: 'photo',
-  //       cameraType: 'back',
-  //       includeBase64: true,
-  //     });
 
-  //     if (result.didCancel) {
-  //       console.log('User canceled image capture');
-  //       return;
-  //     }
-
-  //     if (result.errorCode) {
-  //       console.error('Camera error:', result.errorMessage);
-  //       return;
-  //     }
-  //     const base64Image = result.assets[0].base64;
-  //     const imageData = `data:${result.assets[0].type};base64,${base64Image}`;
-
-  //     // Make API call to send image and student ID
-  //     await markAttendanceApi(item._id, capturedPhoto);
-  //     console.log('Attendance marked successfully for student:', item.name);
-  //   } catch (error) {
-  //     console.error(
-  //       'Error capturing image or marking attendance:',
-  //       error.message,
-  //     );
-  //   }
-  // };
-
-  // const renderStudent = ({item}) =>  (
-  //   <>
-  //   {
-  //     loading ? (
-  //       <ActivityIndicator size="large" color="#0000ff" />
-  //     ) : (
-  //   <TouchableOpacity
-  //     style={[styles.studentSquare, {backgroundColor: item.color}]}
-  //     onPress={() => takePhoto(item)}>
-  //     <Text style={styles.studentName}>{item.name}</Text>
-  //   </TouchableOpacity>
-
-  //     )
-  //   }
-  //   </>
-  // );
   const renderStudent = ({item}) => (
     <TouchableOpacity
       style={[
@@ -221,15 +185,6 @@ const Attendance = () => {
 
   return (
     <>
-      {/* {capturedPhoto ? (
-        <Image style={styles.preview} src={capturedPhoto} />
-      ) : null}
-
-      <Button
-        title="Take Photo"
-        onPress={() => takePhoto(item)}
-        // disabled={!cameraReady}
-      /> */}
       <Animated.View
         pointerEvents="none"
         style={[
@@ -320,7 +275,6 @@ const getStyles = isDarkMode =>
       fontWeight: 'bold',
       textAlign: 'center',
     },
-    preview: {width: 300, height: 300, resizeMode: 'contain'},
     loadingSquare: {
       opacity: 0.5,
     },

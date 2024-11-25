@@ -3,6 +3,7 @@ import axios from 'axios';
 // server backend
 // export const baseUrl = 'https://darkoi.org:5002/api';
 export const baseUrl = 'http://101.53.242.10:5002/api';
+// export const baseUrl = 'http://101.53.242.10:5002/api';
 
 export const handleAPICall = async (url, method, body = {}) => {
   try {
