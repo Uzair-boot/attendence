@@ -1,9 +1,6 @@
 // config/socket.js
 import {io} from 'socket.io-client';
-import { SOCKET_URL } from '../api/handleApi';
-
-
-
+import {SOCKET_URL} from '../api/handleApi';
 
 const socket = io(SOCKET_URL, {
   transports: ['websocket'],

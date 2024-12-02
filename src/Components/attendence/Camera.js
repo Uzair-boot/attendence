@@ -9,7 +9,7 @@ const MyCamera = ({capturedPhoto, setCapturedPhoto, camera}) => {
   const [showPreview, setShowPreview] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
 
-  const device = useCameraDevice('back');
+  const device = useCameraDevice('back') || null;
   // const camera = useRef(null);
 
   // request camera permission
@@ -43,40 +43,40 @@ const MyCamera = ({capturedPhoto, setCapturedPhoto, camera}) => {
     );
   }
 
-  if (!device) {
-    return <Text>No camera device available</Text>;
-  }
+  // if (!device) {
+  //   return <Text>No camera device available</Text>;
+  // }
 
-  const takePhoto = async () => {
-    try {
-      if (!camera.current) {
-        console.error('Camera reference not available.', camera);
-        return;
-      }
+  // const takePhoto = async () => {
+  //   try {
+  //     if (!camera.current) {
+  //       console.error('Camera reference not available.', camera);
+  //       return;
+  //     }
 
-      const photo = await camera.current.takePhoto();
-      console.log(photo);
+  //     const photo = await camera.current.takePhoto();
+  //     console.log(photo);
 
-      if (photo) {
-        setCapturedPhoto(`file://${photo.path}`);
-        setShowPreview(true);
-      } else {
-        console.error('Photo captured is undefined or empty.');
-      }
-    } catch (error) {
-      console.error('Error capturing photo:', error);
-    }
-  };
+  //     if (photo) {
+  //       setCapturedPhoto(`file://${photo.path}`);
+  //       setShowPreview(true);
+  //     } else {
+  //       console.error('Photo captured is undefined or empty.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error capturing photo:', error);
+  //   }
+  // };
 
-  const confirmPhoto = () => {
-    console.log('Photo confirmed:', capturedPhoto);
-    setShowPreview(false);
-  };
+  // const confirmPhoto = () => {
+  //   console.log('Photo confirmed:', capturedPhoto);
+  //   setShowPreview(false);
+  // };
 
-  const retakePhoto = () => {
-    setCapturedPhoto(null);
-    setShowPreview(false);
-  };
+  // const retakePhoto = () => {
+  //   setCapturedPhoto(null);
+  //   setShowPreview(false);
+  // };
 
   const onInitialized = () => {
     setCameraReady(true);
@@ -85,15 +85,17 @@ const MyCamera = ({capturedPhoto, setCapturedPhoto, camera}) => {
 
   return (
     <View style={{flex: 1}}>
-      <Camera
-        style={{flex: 1}}
-        device={device}
-        isActive={true}
-        ref={camera}
-        photo={true}
-        video={true}
-        onInitialized={onInitialized}
-      />
+      {device && (
+        <Camera
+          style={{flex: 1}}
+          device={device}
+          isActive={true}
+          ref={camera}
+          photo={true}
+          video={true}
+          onInitialized={onInitialized}
+        />
+      )}
       {showPreview && capturedPhoto ? (
         <></>
       ) : (

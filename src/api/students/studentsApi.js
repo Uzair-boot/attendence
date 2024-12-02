@@ -9,9 +9,9 @@ export const getallStudentsApi = async () => {
 
 // mark attendence
 export const markAttendanceApi = async (id, image) => {
-  const body = image;
+  const body = {image: image, id: id};
   const res = await handleAPICall(
-    `${studentsUrls.markAttendence}/${id}`,
+    `${studentsUrls.markAttendence}`,
     'POST',
     body,
   );

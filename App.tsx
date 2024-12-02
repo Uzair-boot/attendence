@@ -24,18 +24,22 @@ function App() {
   return (
     <>
       <SafeAreaView style={backgroundStyle}>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={backgroundStyle}>
-          <Attendance />
-          {/* <MyCamera /> */}
-        </ScrollView>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={backgroundStyle}
+      >
+        <Attendance />
+      </ScrollView>
       </SafeAreaView>
       <Toast />
     </>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  scrollContainer: {
+    flex: 1,
+  },
+});
 
 export default App;
