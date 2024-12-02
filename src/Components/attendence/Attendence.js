@@ -187,6 +187,8 @@ const Attendance = () => {
         )}
 
         {attendanceScreen && (
+          <>
+        <Text style={styles.text}>Attendance Sheet</Text>
           <FlatList
             data={students}
             renderItem={renderStudent}
@@ -195,6 +197,7 @@ const Attendance = () => {
             columnWrapperStyle={styles.row}
             keyboardShouldPersistTaps="handled"
           />
+          </>
         )}
       </View>
 
