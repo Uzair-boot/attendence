@@ -30,6 +30,7 @@ const Attendance = () => {
   const [students, setStudents] = useState([]);
   const [loadingStudentId, setLoadingStudentId] = useState(null);
   const [backgroundColor, setBackgroundColor] = useState('white');
+  const [markedStudents, setMarkedStudents] = useState(new Set());
   const warningIntervalRef = useRef(null);
 
   const camera = useRef(null);
@@ -129,6 +130,12 @@ const Attendance = () => {
   };
 
   const takePhoto = async item => {
+    // Check if attendance already marked
+    if (markedStudents.has(item._id)) {
+      showToast(`Attendance already marked for student: ${item.name}`, 'error');
+      return;
+    }
+
     setLoadingStudentId(item._id);
     try {
       if (!camera.current) {
@@ -142,6 +149,10 @@ const Attendance = () => {
         const size = getBase64ImageSize(base64Image);
         console.log('Photo size:', size);
         await markAttendanceApi(item._id, base64Image);
+
+        // Update marked students state
+        setMarkedStudents(prevMarked => new Set([...prevMarked, item._id]));
+
         showToast(
           `Attendance marked successfully for student: ${item.name}`,
           'success',
@@ -176,27 +187,24 @@ const Attendance = () => {
 
   return (
     <View style={styles.root}>
-      {/* Warning Background */}
       <View style={[styles.warningContainer, {backgroundColor}]} />
 
-      {/* Main Content */}
       <View style={styles.mainContent}>
-        {/* <Text style={styles.text}>{message}</Text> */}
         {!attendanceScreen && !students.length && (
           <Image source={defaultImage} style={styles.defaultImage} />
         )}
 
         {attendanceScreen && (
           <>
-        <Text style={styles.text}>Attendance Sheet</Text>
-          <FlatList
-            data={students}
-            renderItem={renderStudent}
-            keyExtractor={item => item._id}
-            numColumns={3}
-            columnWrapperStyle={styles.row}
-            keyboardShouldPersistTaps="handled"
-          />
+            <Text style={styles.text}>Attendance Sheet</Text>
+            <FlatList
+              data={students}
+              renderItem={renderStudent}
+              keyExtractor={item => item._id}
+              numColumns={3}
+              columnWrapperStyle={styles.row}
+              keyboardShouldPersistTaps="handled"
+            />
           </>
         )}
       </View>
